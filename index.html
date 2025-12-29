@@ -3,60 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Lister</title>
+    <title>Movie Lister | Collection</title>
     <style>
-        :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 2rem; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; margin-bottom: 2rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-        .card { background: var(--card); border-radius: 12px; padding: 1.5rem; border: 1px solid #333; transition: 0.3s; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .year { color: #888; font-size: 0.9rem; }
-        .format-tag { display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        .tag-4k { background: #cf6679; color: #000; }
-        .tag-blu { background: #03dac6; color: #000; }
-        #search { padding: 10px; border-radius: 8px; border: 1px solid #333; background: #222; color: white; width: 250px; }
+        /* Modern Dark Theme */
+        :root { 
+            --bg: #121212; 
+            --text: #e0e0e0; 
+            --accent: #bb86fc; 
+            --row-hover: #1f1f1f; 
+            --border: #333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 2rem; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header { 
+            width: 100%;
+            max-width: 800px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 1rem;
+            margin-bottom: 2rem; 
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; }
+
+        /* Dense Search Bar */
+        #search { 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            border: 1px solid var(--border); 
+            background: #222; 
+            color: white; 
+            width: 200px;
+            outline: none;
+        }
+        #search:focus { border-color: var(--accent); }
+
+        /* Dense Table Styling */
+        .table-container { width: 100%; max-width: 800px; }
+        
+        .movie-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.95rem; 
+        }
+
+        .movie-table th { 
+            text-align: left; 
+            border-bottom: 2px solid var(--border); 
+            padding: 10px; 
+            color: var(--accent); 
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .movie-table td { 
+            padding: 10px; 
+            border-bottom: 1px solid #222; 
+        }
+
+        .movie-table tr:hover { background: var(--row-hover); }
+
+        /* Format Pills */
+        .format-pill { 
+            font-size: 0.7rem; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            background: #333;
+            border: 1px solid transparent;
+        }
+        .tag-4k { color: #ffab40; border-color: #ffab40; }
+        .tag-blu { color: #40c4ff; border-color: #40c4ff; }
+
+        .loading { color: #888; font-style: italic; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Dave's Physical Media</h1>
-    <input type="text" id="search" placeholder="Search titles...">
+    <h1>🎬 Movie Vault</h1>
+    <input type="text" id="search" placeholder="Search collection...">
 </header>
 
-<div id="movie-grid" class="grid">
-    </div>
-
-
+<div class="table-container">
+    <table class="movie-table">
+        <thead>
+            <tr>
+                <th style="width: 10%;">Year</th>
+                <th style="width: 70%;">Title</th>
+                <th style="width: 20%;">Format</th>
+            </tr>
+        </thead>
+        <tbody id="movie-rows">
+            <tr>
+                <td colspan="3" class="loading">Fetching latest data...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <script>
     let allMovies = [];
-    // This is the URL you provided
-    const DATA_URL = 'https://raw.githubusercontent.com/davedrave/physical-movie-repo/refs/heads/main/movies.json';
+    // URL to your public physical-movie-repo JSON
+    // The Date.now() part forces GitHub to bypass the 5-minute cache
+    const DATA_URL = 'https://raw.githubusercontent.com/davedrave/physical-movie-repo/refs/heads/main/movies.json?v=' + Date.now();
 
     async function loadData() {
-        const grid = document.getElementById('movie-grid');
         try {
             const response = await fetch(DATA_URL);
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) throw new Error('Failed to reach data repo');
             
             allMovies = await response.json();
-            
-            // Optional: Update a counter if you add an element with id="count"
-            // document.getElementById('count').innerText = `${allMovies.length} Titles`;
-            
             displayMovies(allMovies);
         } catch (error) {
-            console.error('Fetch error:', error);
-            grid.innerHTML = `<p style="color: #cf6679;">Error: Could not load data from GitHub.</p>`;
+            console.error('Error:', error);
+            document.getElementById('movie-rows').innerHTML = `
+                <tr><td colspan="3" style="color: #cf6679;">Error: Could not load data. Check URL.</td></tr>
+            `;
         }
     }
-function displayMovies(movies) {
+
+    function displayMovies(movies) {
         const tbody = document.getElementById('movie-rows');
+        
+        if (movies.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3">No movies found.</td></tr>';
+            return;
+        }
+
         tbody.innerHTML = movies.map(m => `
             <tr>
-                <td style="width: 60px; color: #888;">${m.year}</td>
+                <td style="color: #888;">${m.year}</td>
                 <td style="font-weight: 500;">${m.title}</td>
                 <td>
                     <span class="format-pill ${m.format.toLowerCase().includes('4k') ? 'tag-4k' : 'tag-blu'}">
@@ -67,14 +157,18 @@ function displayMovies(movies) {
         `).join('');
     }
 
-    // Search functionality
+    // Search logic
     document.getElementById('search').addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
-        const filtered = allMovies.filter(m => m.title.toLowerCase().includes(term));
+        const filtered = allMovies.filter(m => 
+            m.title.toLowerCase().includes(term) || 
+            m.year.toString().includes(term)
+        );
         displayMovies(filtered);
     });
 
     loadData();
 </script>
+
 </body>
 </html>

@@ -21,7 +21,7 @@
 <body>
 
 <header>
-    <h1>My Physical Media</h1>
+    <h1>Dave's Physical Media</h1>
     <input type="text" id="search" placeholder="Search titles...">
 </header>
 
@@ -29,7 +29,7 @@
     </div>
 
 
-    
+
 <script>
     let allMovies = [];
     // This is the URL you provided
@@ -52,22 +52,18 @@
             grid.innerHTML = `<p style="color: #cf6679;">Error: Could not load data from GitHub.</p>`;
         }
     }
-
-    function displayMovies(movies) {
-        const grid = document.getElementById('movie-grid');
-        if (movies.length === 0) {
-            grid.innerHTML = '<p>No movies found.</p>';
-            return;
-        }
-
-        grid.innerHTML = movies.map(m => `
-            <div class="card">
-                <div class="year">${m.year}</div>
-                <div style="font-size: 1.25rem; font-weight: bold; margin: 5px 0;">${m.title}</div>
-                <span class="format-tag ${m.format.toLowerCase().includes('4k') ? 'tag-4k' : 'tag-blu'}">
-                    ${m.format}
-                </span>
-            </div>
+function displayMovies(movies) {
+        const tbody = document.getElementById('movie-rows');
+        tbody.innerHTML = movies.map(m => `
+            <tr>
+                <td style="width: 60px; color: #888;">${m.year}</td>
+                <td style="font-weight: 500;">${m.title}</td>
+                <td>
+                    <span class="format-pill ${m.format.toLowerCase().includes('4k') ? 'tag-4k' : 'tag-blu'}">
+                        ${m.format}
+                    </span>
+                </td>
+            </tr>
         `).join('');
     }
 

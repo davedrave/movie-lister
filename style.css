@@ -1,17 +1,20 @@
+
+* {
+    font-family: 'Courier New', monospace;
+}
+
 body {
     background-color: #000000;
     color: #00ff00;
-    font-family: sans-serif; /* Cleaner than the default browser font */
-    margin: 0;
     padding: 20px;
     letter-spacing: 2px;
 }
 
 #search {
     background: transparent;
+    color: #00ff00;
     border: none;
     border-bottom: 2px solid #00ff00;
-    font-family: 'Courier New', monospace;
     font-size: 1.1rem;
     width: 100%;
     max-width: 500px;

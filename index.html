@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Lister</title>
+    <style>
+        :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #bb86fc; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 2rem; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; margin-bottom: 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--card); border-radius: 12px; padding: 1.5rem; border: 1px solid #333; transition: 0.3s; }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .year { color: #888; font-size: 0.9rem; }
+        .format-tag { display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .tag-4k { background: #cf6679; color: #000; }
+        .tag-blu { background: #03dac6; color: #000; }
+        #search { padding: 10px; border-radius: 8px; border: 1px solid #333; background: #222; color: white; width: 250px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>My Physical Media</h1>
+    <input type="text" id="search" placeholder="Search titles...">
+</header>
+
+<div id="movie-grid" class="grid">
+    </div>
+
+<script>
+    let allMovies = [];
+    // This is the URL you provided
+    const DATA_URL = 'https://raw.githubusercontent.com/davedrave/physical-movie-repo/refs/heads/main/movies.json';
+
+    async function loadData() {
+        const grid = document.getElementById('movie-grid');
+        try {
+            const response = await fetch(DATA_URL);
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            allMovies = await response.json();
+            
+            // Optional: Update a counter if you add an element with id="count"
+            // document.getElementById('count').innerText = `${allMovies.length} Titles`;
+            
+            displayMovies(allMovies);
+        } catch (error) {
+            console.error('Fetch error:', error);
+            grid.innerHTML = `<p style="color: #cf6679;">Error: Could not load data from GitHub.</p>`;
+        }
+    }
+
+    function displayMovies(movies) {
+        const grid = document.getElementById('movie-grid');
+        if (movies.length === 0) {
+            grid.innerHTML = '<p>No movies found.</p>';
+            return;
+        }
+
+        grid.innerHTML = movies.map(m => `
+            <div class="card">
+                <div class="year">${m.year}</div>
+                <div style="font-size: 1.25rem; font-weight: bold; margin: 5px 0;">${m.title}</div>
+                <span class="format-tag ${m.format.toLowerCase().includes('4k') ? 'tag-4k' : 'tag-blu'}">
+                    ${m.format}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    // Search functionality
+    document.getElementById('search').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allMovies.filter(m => m.title.toLowerCase().includes(term));
+        displayMovies(filtered);
+    });
+
+    loadData();
+</script>
+</body>
+</html>

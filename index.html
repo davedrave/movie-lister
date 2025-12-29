@@ -4,97 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Lister | Collection</title>
-    <style>
-        /* Modern Dark Theme */
-        :root { 
-            --bg: #121212; 
-            --text: #e0e0e0; 
-            --accent: #bb86fc; 
-            --row-hover: #1f1f1f; 
-            --border: #333;
-        }
-
-        body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            margin: 0; 
-            padding: 2rem; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        header { 
-            width: 100%;
-            max-width: 800px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 1rem;
-            margin-bottom: 2rem; 
-        }
-
-        h1 { margin: 0; font-size: 1.5rem; }
-
-        /* Dense Search Bar */
-        #search { 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            border: 1px solid var(--border); 
-            background: #222; 
-            color: white; 
-            width: 200px;
-            outline: none;
-        }
-        #search:focus { border-color: var(--accent); }
-
-        /* Dense Table Styling */
-        .table-container { width: 100%; max-width: 800px; }
-        
-        .movie-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 0.95rem; 
-        }
-
-        .movie-table th { 
-            text-align: left; 
-            border-bottom: 2px solid var(--border); 
-            padding: 10px; 
-            color: var(--accent); 
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        .movie-table td { 
-            padding: 10px; 
-            border-bottom: 1px solid #222; 
-        }
-
-        .movie-table tr:hover { background: var(--row-hover); }
-
-        /* Format Pills */
-        .format-pill { 
-            font-size: 0.7rem; 
-            padding: 2px 8px; 
-            border-radius: 4px; 
-            font-weight: bold; 
-            background: #333;
-            border: 1px solid transparent;
-        }
-        .tag-4k { color: #ffab40; border-color: #ffab40; }
-        .tag-blu { color: #40c4ff; border-color: #40c4ff; }
-
-        .loading { color: #888; font-style: italic; }
-    </style>
+    
 </head>
 <body>
 
 <header>
-    <h1>🎬 Movie Vault</h1>
+    <h1>Dave's Physical Media/h1>
     <input type="text" id="search" placeholder="Search collection...">
 </header>
 

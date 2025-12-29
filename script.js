@@ -1,22 +1,18 @@
  let allMovies = [];
     // URL to your public physical-movie-repo JSON
     // The Date.now() part forces GitHub to bypass the 5-minute cache
-    const DATA_URL = 'https://raw.githubusercontent.com/davedrave/physical-movie-repo/refs/heads/main/movies.json?v=' + Date.now();
+    const DATA_URL = 'https://raw.githubusercontent.com/davedrave/physical-movie-repo/refs/heads/main/movies.yml?v=' + Date.now();
 
-    async function loadData() {
-        try {
-            const response = await fetch(DATA_URL);
-            if (!response.ok) throw new Error('Failed to reach data repo');
-            
-            allMovies = await response.json();
-            displayMovies(allMovies);
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('movie-rows').innerHTML = `
-                <tr><td colspan="3" style="color: #cf6679;">Error: Could not load data. Check URL.</td></tr>
-            `;
-        }
+async function loadData() {
+    try {
+        const response = await fetch(DATA_URL);
+        const text = await response.text(); // Get as text first
+        allMovies = jsyaml.load(text);      // Translate YAML to JS
+        displayMovies(allMovies);
+    } catch (error) {
+        console.error('Error:', error);
     }
+}
 
     function displayMovies(movies) {
         const tbody = document.getElementById('movie-rows');
